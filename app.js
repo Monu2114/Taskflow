@@ -6,7 +6,10 @@ const content = document.getElementById("content");
 const todo = document.getElementById("todo");
 const completed = document.getElementById("completed");
 const archived = document.getElementById("archived");
+const submitTask = document.getElementById("submitTask");
+const addTask = document.getElementById("addTask");
 const tabs = [todo, completed, archived];
+let currentTab = "todo";
 
 // Protect app.html
 if (!localStorage.getItem("userName") || !localStorage.getItem("userDob")) {
@@ -64,6 +67,7 @@ function renderTasks(stage) {
   const filtered = tasks
     .filter((task) => task.status === stage)
     .sort((a, b) => b.time - a.time);
+  currentTab = stage;
 
   filtered.forEach((task) => {
     const card = document.createElement("div");
@@ -151,4 +155,21 @@ completed.onclick = () => {
 archived.onclick = () => {
   highlightActiveTab(archived);
   renderTasks("archived");
+};
+
+submitTask.onclick = () => {
+  if (addTask.value.trim() === "") {
+    alert("Enter valid task");
+    return;
+  }
+
+  tasks.push({
+    title: addTask.value.trim(),
+    status: currentTab,
+    time: Date.now(),
+  });
+
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  addTask.value = ""; // Clear input
+  renderTasks(currentTab); // Re-render current tab
 };
