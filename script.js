@@ -1,3 +1,6 @@
+if (localStorage.getItem("userName") && localStorage.getItem("userDob")) {
+  window.location.href = "app.html";
+}
 const nameInput = document.getElementById("name");
 const dateInput = document.getElementById("date");
 const form = document.getElementById("verifyForm");
