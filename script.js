@@ -5,6 +5,7 @@ const nameInput = document.getElementById("name");
 const dateInput = document.getElementById("date");
 const form = document.getElementById("verifyForm");
 
+// calculating age and validating
 const calculateAge = (dob) => {
   const today = new Date();
   const birthDate = new Date(dob);
@@ -31,22 +32,26 @@ form.onsubmit = (e) => {
 
   // Basic Validation
   if (name === "" || dob === "") {
-    alert("Please fill in all fields.");
+    showToast("Please fill in all fields.");
     return;
   }
-
-  // Name Validation (letters and spaces only)
   const nameRegex = /^[A-Za-z\s]+$/;
+
   if (!nameRegex.test(name)) {
-    alert("Name can only contain letters and spaces.");
+    showToast("Name can only contain letters and spaces.");
     return;
   }
-
   const age = calculateAge(dob);
-  console.log("Age:", age);
+  const birthDate = new Date(dob);
+  const today = new Date();
+
+  if (birthDate > today) {
+    showToast("Date of Birth cannot be in the future.");
+    return;
+  }
 
   if (age <= 10) {
-    alert("You must be older than 10 to continue.");
+    showToast("You must be older than 10 to continue.");
     return;
   }
 
@@ -58,3 +63,14 @@ form.onsubmit = (e) => {
   window.location.href = "app.html";
   // Redirect
 };
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.add("hidden");
+    toast.classList.remove("show");
+  }, 2000);
+}

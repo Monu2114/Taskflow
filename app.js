@@ -69,7 +69,15 @@ function renderTasks(stage) {
     .filter((task) => task.title.toLowerCase().includes(search))
     .filter((task) => (priority ? task.priority === priority : true))
     .sort((a, b) => b.time - a.time);
-
+  todo.textContent = `Todo (${
+    tasks.filter((t) => t.status === "todo").length
+  })`;
+  completed.textContent = `Completed (${
+    tasks.filter((t) => t.status === "completed").length
+  })`;
+  archived.textContent = `Archived (${
+    tasks.filter((t) => t.status === "archived").length
+  })`;
   filtered.forEach((task) => {
     const card = document.createElement("div");
     card.className =
@@ -77,14 +85,13 @@ function renderTasks(stage) {
 
     let buttons = "";
     if (stage === "todo") {
-      buttons = `<button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Mark Completed</button>
+      buttons = `<button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Mark it as Completed</button>
                  <button class="archive bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archive</button>`;
     } else if (stage === "completed") {
       buttons = `
                  <button class="archive bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archive</button>`;
     } else if (stage === "archived") {
-      buttons = `<button class="todo bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">Move to Todo</button>
-                 <button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Move to Completed</button>`;
+      buttons = `<button class=" bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archived</button>`;
     }
 
     card.innerHTML = `
@@ -163,7 +170,7 @@ submitTask.onclick = () => {
     title: addTask.value.trim(),
     status: "todo",
     time: Date.now(),
-    priority,
+    priority: "medium",
   });
 
   localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -227,8 +234,15 @@ document.addEventListener("keydown", (e) => {
 });
 
 // Initial Render
-highlightActiveTab(todo);
-renderTasks("todo");
+if (tasks.length === 0) {
+  getData().then(() => {
+    highlightActiveTab(todo);
+    renderTasks("todo");
+  });
+} else {
+  highlightActiveTab(todo);
+  renderTasks("todo");
+}
 
 function showToast(message) {
   const toast = document.getElementById("toast");
