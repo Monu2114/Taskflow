@@ -6,6 +6,7 @@ const content = document.getElementById("content");
 const todo = document.getElementById("todo");
 const completed = document.getElementById("completed");
 const archived = document.getElementById("archived");
+const tabs = [todo, completed, archived];
 
 // Protect app.html
 if (!localStorage.getItem("userName") || !localStorage.getItem("userDob")) {
@@ -42,7 +43,7 @@ async function getData() {
       tasks.push({
         title: task.todo,
         time: Date.now(),
-        status: "todo", // Store as formatted string
+        status: "todo",
       });
     });
 
@@ -52,6 +53,12 @@ async function getData() {
     console.error(error.message);
   }
 }
+
+function highlightActiveTab(activeTab) {
+  tabs.forEach((tab) => tab.classList.remove("active-tab"));
+  activeTab.classList.add("active-tab");
+}
+
 function renderTasks(stage) {
   content.innerHTML = "";
   const filtered = tasks
@@ -66,31 +73,30 @@ function renderTasks(stage) {
     let buttons = "";
     if (stage === "todo") {
       buttons = `
-          <button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Mark as completed</button>
-          <button class="archive bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archive</button>
-        `;
+        <button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Mark as completed</button>
+        <button class="archive bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archive</button>
+      `;
     } else if (stage === "completed") {
       buttons = `
-          <button class="todo bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">Move to Todo</button>
-          <button class="archive bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archive</button>
-        `;
+        <button class="todo bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">Move to Todo</button>
+        <button class="archive bg-gray-500 hover:bg-gray-600 px-3 py-1 rounded text-sm">Archive</button>
+      `;
     } else if (stage === "archived") {
       buttons = `
-          <button class="todo bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">Move to Todo</button>
-          <button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Move to Completed</button>
-        `;
+        <button class="todo bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm">Move to Todo</button>
+        <button class="mark-completed bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Move to Completed</button>
+      `;
     }
 
     card.innerHTML = `
-        <div>
-          <p class="font-semibold mb-2">${task.title}</p>
-          <div class="flex gap-2">${buttons}</div>
-        </div>
+      <div>
+        <p class="font-semibold mb-2">${task.title}</p>
+        <div class="flex gap-2">${buttons}</div>
+      </div>
       <p class="text-sm text-gray-400">Last modified at:<br>${new Date(
         task.time
       ).toLocaleString()}</p>
-
-      `;
+    `;
 
     card.querySelectorAll("button").forEach((btn) => {
       btn.onclick = () => {
@@ -98,13 +104,15 @@ function renderTasks(stage) {
           task.status = "completed";
           task.time = Date.now();
           localStorage.setItem("tasks", JSON.stringify(tasks));
+          highlightActiveTab(completed);
           renderTasks("completed");
-          return; // Prevent re-render of current view
+          return;
         }
         if (btn.classList.contains("archive")) {
           task.status = "archived";
           task.time = Date.now();
           localStorage.setItem("tasks", JSON.stringify(tasks));
+          highlightActiveTab(archived);
           renderTasks("archived");
           return;
         }
@@ -112,12 +120,12 @@ function renderTasks(stage) {
           task.status = "todo";
           task.time = Date.now();
           localStorage.setItem("tasks", JSON.stringify(tasks));
+          highlightActiveTab(todo);
           renderTasks("todo");
           return;
         }
 
-        // If no specific action, just refresh current stage
-        task.time = new Date().toLocaleString();
+        task.time = Date.now();
         localStorage.setItem("tasks", JSON.stringify(tasks));
         renderTasks(stage);
       };
@@ -126,8 +134,21 @@ function renderTasks(stage) {
     content.appendChild(card);
   });
 }
+
+// Initial render
+highlightActiveTab(todo);
 renderTasks("todo");
 
-todo.onclick = () => renderTasks("todo");
-completed.onclick = () => renderTasks("completed");
-archived.onclick = () => renderTasks("archived");
+// Tab click events
+todo.onclick = () => {
+  highlightActiveTab(todo);
+  renderTasks("todo");
+};
+completed.onclick = () => {
+  highlightActiveTab(completed);
+  renderTasks("completed");
+};
+archived.onclick = () => {
+  highlightActiveTab(archived);
+  renderTasks("archived");
+};

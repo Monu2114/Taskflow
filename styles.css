@@ -1,1 +1,4 @@
 @import "tailwindcss";
+.active-tab {
+  background-color: white;
+}
