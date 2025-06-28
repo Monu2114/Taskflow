@@ -6,19 +6,44 @@
     <link href="./output.css" rel="stylesheet" />
     <title>Taskflow</title>
   </head>
-  <body>
-    <h1 class="text-3xl font-bold">Taskflow</h1>
-    <div class="flex flex-col border border-2 gap-4 w-sm rounded-2xl p-8">
-      <p>Verify Your Identity</p>
-      <form action="" class="flex flex-col">
-        <label for="name"
-          >Full Name
-          <input type="text" placeholder="Enter your full name" id="name" />
-        </label>
-        <label for="name"
-          >Full Name
-          <input type="text" placeholder="Enter your full name" id="name" />
-        </label>
+  <body
+    class="min-h-screen flex flex-col justify-center items-center bg-gray-100"
+  >
+    <h1 class="text-3xl font-bold text-center text-blue-600">TaskFlow</h1>
+    <div
+      class="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6 mt-12"
+    >
+      <p class="text-center text-gray-600">Verify Your Identity</p>
+      <form id="verifyForm" class="space-y-4">
+        <div class="flex flex-col">
+          <label for="name" class="text-gray-700 font-medium mb-1"
+            >Full Name</label
+          >
+          <input
+            type="text"
+            id="name"
+            placeholder="Enter your full name"
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div class="flex flex-col">
+          <label for="date" class="text-gray-700 font-medium mb-1"
+            >Date of Birth</label
+          >
+          <input
+            type="date"
+            id="date"
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          Verify & Continue
+        </button>
       </form>
     </div>
   </body>
